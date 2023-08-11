@@ -127,8 +127,8 @@ class HBNBCommand(cmd.Cmd):
         args_size = len(args)
         if args_size == 0:
             print('** class name missing **')
-        elif args[0] not in self.existed_classes:
-            print("** class doesn't exist **")
+        elif args[0].strip() not in self.existed_classes:
+            print("** class doesn't exist **", args[0])
         elif args_size == 1:
             print('** instance id missing **')
         else:
@@ -194,7 +194,7 @@ class HBNBCommand(cmd.Cmd):
                         possible_dict = eval(possible_dict)
 
                         if isinstance(possible_dict, dict):
-                            self.update_with_dict(method_name, class_,
+                            self.update_with_dict(class_,
                                                   update_data[0][1:-1],
                                                   possible_dict)
                         else:
@@ -206,11 +206,11 @@ class HBNBCommand(cmd.Cmd):
                         other = ""
                         if len(update_data) > 3:
                             other = " ".join(update_data[3:])
-                        self.do_update(" ".join([method_name, class_,
+                        self.do_update(" ".join([class_,
                                                  class_id, attr_name,
                                                  attr_value, other]))
 
-    def update_with_dict(self, method, class_, class_id, dict_):
+    def update_with_dict(self, class_, class_id, dict_):
         """
         Update your command interpreter (console.py) to
         update an instance based on his ID with a dictionary:
@@ -219,10 +219,10 @@ class HBNBCommand(cmd.Cmd):
 
         attr_val = ""
         for key, val in dict_.items():
-            attr_val = val
-            if isinstance(self.analyze_parameter_value(val), str):
+            attr_val = str(val)
+            if isinstance(val, str):
                 attr_val = '"{}"'.format(val)
-            self.do_update(" ".join([method, class_,
+            self.do_update(" ".join([class_,
                                      class_id, key, attr_val]))
 
     def get_objects(self, instance=''):
