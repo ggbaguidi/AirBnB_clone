@@ -3,6 +3,7 @@
 
 import cmd
 
+import models
 from models.base_model import BaseModel
 
 
@@ -36,15 +37,61 @@ class HBNBCommand(cmd.Cmd):
         and print the id.
         """
 
-        command = self.parseline(args)[0]
-        if command is None:
+        class_ = self.parseline(args)[0]
+        if class_ is None:
             print("** class name missing **")
-        elif command not in self.existed_classes:
+        elif class_ not in self.existed_classes:
             print("** class doesn't exist **")
         else:
-            new = eval(command)()
+            new = eval(class_)()
             new.save()
             print(new.id)
+
+    def do_show(self, args):
+        """
+        Prints the string representation of
+        an instance based on the class name and id
+        """
+
+        class_ = self.parseline(args)[0]
+        id_ = self.parseline(args)[1]
+
+        if class_ is None:
+            print("** class name missing **")
+        elif class_ not in self.existed_classes:
+            print("** class doesn't exist **")
+        elif id_ == '':
+            print("** no instance found **")
+        else:
+            obj = models.storage.all().get(class_+"."+id_)
+
+            if obj is None:
+                print('** no instance found **')
+            else:
+                print(obj)
+
+    def do_destroy(self, arg):
+        """
+         Deletes an instance based on the class name and id
+         (save the change into the JSON file)
+        """
+        class_ = self.parseline(arg)[0]
+        id_ = self.parseline(arg)[1]
+
+        if class_ is None:
+            print("** class name missing **")
+        elif class_ not in self.existed_classes:
+            print("** class doesn't exist **")
+        elif id_ == '':
+            print("** instance id missing **")
+        else:
+            key = class_ + '.' + id_
+            obj = models.storage.all().get(key)
+            if obj is None:
+                print('** no instance found **')
+            else:
+                del models.storage.all()[key]
+                models.storage.save()
 
 
 if __name__ == '__main__':
