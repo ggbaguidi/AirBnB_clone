@@ -2,9 +2,18 @@
 """My console"""
 
 import cmd
+import re
+import shlex
+from datetime import datetime
 
 import models
 from models.base_model import BaseModel
+from models.user import User
+from models.city import City
+from models.review import Review
+from models.place import Place
+from models.state import State
+from models.amenity import Amenity
 
 
 class HBNBCommand(cmd.Cmd):
@@ -20,15 +29,15 @@ class HBNBCommand(cmd.Cmd):
 
     def do_quit(self, _):
         """Quit command to exit the program"""
-        exit()
+        return True
 
     def do_EOF(self, _):
         """EOF command to exit the program"""
-        exit()
+        return True
 
     def emptyline(self):
         """Do nothing on an empty line."""
-        pass
+        return False
 
     def do_create(self, args):
         """
@@ -174,6 +183,24 @@ class HBNBCommand(cmd.Cmd):
                 elif method_name == 'destroy':
                     class_id = split[2][1:-1]
                     self.do_destroy(class_ + ' ' + class_id)
+                elif method_name == 'update':
+                    update_data = split[2].split(",")
+                    if update_data is None or len(update_data) == 0:
+                        print('** instance id missing **')
+                    elif len(update_data) == 1:
+                        print('** attribute name missing **')
+                    elif len(update_data) == 2:
+                        print('** value missing **')
+                    else:
+                        class_id = update_data[0][1:-1]
+                        attr_name = update_data[1][2:-1]
+                        attr_value = update_data[2][1:]
+                        other = ""
+                        if len(update_data) > 3:
+                            other = " ".join(update_data[3:])
+                        self.do_update(" ".join([method_name, class_,
+                                                 class_id, attr_name,
+                                                 attr_value, other]))
 
     def get_objects(self, instance=''):
         """
