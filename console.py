@@ -190,7 +190,15 @@ class HBNBCommand(cmd.Cmd):
                     elif len(update_data) == 1:
                         print('** attribute name missing **')
                     elif len(update_data) == 2:
-                        print('** value missing **')
+                        possible_dict = update_data[1]
+                        possible_dict = eval(possible_dict)
+
+                        if isinstance(possible_dict, dict):
+                            self.update_with_dict(method_name, class_,
+                                                  update_data[0][1:-1],
+                                                  possible_dict)
+                        else:
+                            print('** value missing **')
                     else:
                         class_id = update_data[0][1:-1]
                         attr_name = update_data[1][2:-1]
@@ -201,6 +209,21 @@ class HBNBCommand(cmd.Cmd):
                         self.do_update(" ".join([method_name, class_,
                                                  class_id, attr_name,
                                                  attr_value, other]))
+
+    def update_with_dict(self, method, class_, class_id, dict_):
+        """
+        Update your command interpreter (console.py) to
+        update an instance based on his ID with a dictionary:
+        <class name>.update(<id>, <dictionary representation>)
+        """
+
+        attr_val = ""
+        for key, val in dict_.items():
+            attr_val = val
+            if isinstance(self.analyze_parameter_value(val), str):
+                attr_val = '"{}"'.format(val)
+            self.do_update(" ".join([method, class_,
+                                     class_id, key, attr_val]))
 
     def get_objects(self, instance=''):
         """
