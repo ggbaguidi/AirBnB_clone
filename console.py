@@ -119,36 +119,44 @@ class HBNBCommand(cmd.Cmd):
         else:
             print("** class doesn't exist **")
 
-    def do_update(self, arg):
+    def do_update(self, args):
         """
         Updates an instance based on the class name
         and id by adding or updating attribute
         """
-        args = shlex.split(arg)
-        args_size = len(args)
-        if args_size == 0:
-            print('** class name missing **')
-        elif args[0].strip() not in self.existed_classes:
-            print("** class doesn't exist **", args[0])
-        elif args_size == 1:
-            print('** instance id missing **')
-        else:
-            key = args[0] + '.' + args[1]
-            inst_data = models.storage.all().get(key)
-            if inst_data is None:
-                print('** no instance found **')
-            if args_size == 2:
-                print('** attribute name missing **')
-            elif args_size == 3:
-                print('** value missing **')
-            else:
-                args[3] = self.analyze_parameter_value(args[3])
-                try:
-                    setattr(inst_data, args[2], args[3])
-                    setattr(inst_data, 'updated_at', datetime.now())
-                except AttributeError:
-                    pass
-                models.storage.save()
+        
+        args = args.split()
+        if not args:
+            print("** class name missing **")
+            return
+        if args[0] not in self.existed_classes:
+            print("** class doesn't exist **")
+            return
+        try:
+            args[1]
+        except Exception:
+            print("** instance id missing **")
+            return
+        objects_dict = models.storage.all()
+        my_key = args[0] + "." + args[1]
+        if my_key not in objects_dict:
+            print("** no instance found **")
+            return
+        try:
+            args[2]
+        except Exception:
+            print("** attribute name missing **")
+            return
+        try:
+            args[3]
+        except Exception:
+            print("** value missing **")
+            return
+        if args[3]:
+            setattr(objects_dict[my_key], args[2], args[3])
+            my_obj = objects_dict[my_key]
+            my_obj.updated_at = datetime.now()
+            models.storage.save()
 
     def analyze_parameter_value(self, value):
         """
