@@ -4,6 +4,7 @@
 import cmd
 import re
 import shlex
+import ast
 from datetime import datetime
 
 import models
@@ -185,13 +186,15 @@ class HBNBCommand(cmd.Cmd):
                     self.do_destroy(class_ + ' ' + class_id)
                 elif method_name == 'update':
                     update_data = split[2].split(",")
+                    print(update_data)
                     if update_data is None or len(update_data) == 0:
                         print('** instance id missing **')
                     elif len(update_data) == 1:
                         print('** attribute name missing **')
                     elif len(update_data) == 2:
                         possible_dict = update_data[1]
-                        possible_dict = eval(possible_dict)
+                        print(update_data)
+                        possible_dict = ast.literal_eval(possible_dict)
 
                         if isinstance(possible_dict, dict):
                             self.update_with_dict(class_,
