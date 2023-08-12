@@ -71,7 +71,7 @@ class HBNBCommand(cmd.Cmd):
         elif class_ not in self.existed_classes:
             print("** class doesn't exist **")
         elif id_ == '':
-            print("** no instance found **")
+            print("** instance id missing **")
         else:
             obj = models.storage.all().get(class_+"."+id_)
 
