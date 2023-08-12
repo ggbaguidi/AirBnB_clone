@@ -16,17 +16,23 @@ class BaseModel:
     def __init__(self, *args, **kwargs):
         """instanciate the class"""
 
-        if len(kwargs) == 0:
-            self.id = str(uuid.uuid4())
-            self.created_at = datetime.utcnow()
-            self.updated_at = datetime.utcnow()
-            models.storage.new(self)
-        else:
+        if kwargs:
             for key, value in kwargs.items():
-                if '__class__' != key:
-                    setattr(self, key, value)
-                if key.endswith("_at"):
-                    setattr(self, key, datetime.fromisoformat(value))
+                if key == 'id':
+                    self.id = kwargs[key]
+                elif key == 'created_at':
+                    self.created_at = datetime.strptime(
+                        kwargs[key], "%Y-%m-%dT%H:%M:%S.%f")
+                elif key == 'updated_at':
+                    self.update_at = datetime.strptime(
+                        kwargs[key], "%Y-%m-%dT%H:%M:%S.%f")
+                else:
+                    if key != '__class__':
+                        setattr(self, key, value)
+        else:
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
+            self.id = str(uuid.uuid4())
 
     def __str__(self):
         """print a object"""
@@ -39,7 +45,8 @@ class BaseModel:
     def save(self):
         """save model"""
 
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now()
+        models.storage.new(self)
         models.storage.save()
 
     def to_dict(self):
