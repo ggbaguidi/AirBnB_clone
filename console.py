@@ -50,12 +50,15 @@ class HBNBCommand(cmd.Cmd):
         class_ = self.parseline(args)[0]
         if class_ is None:
             print("** class name missing **")
+            return
         elif class_ not in self.existed_classes:
             print("** class doesn't exist **")
+            return
         else:
             new = eval(class_)()
             new.save()
             print(new.id)
+            return
 
     def do_show(self, args):
         """
@@ -68,17 +71,22 @@ class HBNBCommand(cmd.Cmd):
 
         if class_ is None:
             print("** class name missing **")
+            return
         elif class_ not in self.existed_classes:
             print("** class doesn't exist **")
+            return
         elif id_ == '':
             print("** instance id missing **")
+            return
         else:
             obj = models.storage.all().get(class_+"."+id_)
 
             if obj is None:
                 print('** no instance found **')
+                return
             else:
                 print(obj)
+                return
 
     def do_destroy(self, args):
         """
@@ -90,18 +98,23 @@ class HBNBCommand(cmd.Cmd):
 
         if class_ is None:
             print("** class name missing **")
+            return
         elif class_ not in self.existed_classes:
             print("** class doesn't exist **")
+            return
         elif id_ == '':
             print("** instance id missing **")
+            return
         else:
             key = class_ + '.' + id_
             obj = models.storage.all().get(key)
             if obj is None:
                 print('** no instance found **')
+                return
             else:
                 del models.storage.all()[key]
                 models.storage.save()
+                return
 
     def do_all(self, args):
         """
@@ -112,19 +125,21 @@ class HBNBCommand(cmd.Cmd):
         objs = models.storage.all()
         if class_ is None:
             print([str(objs[obj]) for obj in objs])
+            return
         elif class_ in self.existed_classes:
             keys = objs.keys()
             print([str(objs[key]) for key in keys
                    if key.startswith(class_)])
+            return
         else:
             print("** class doesn't exist **")
+            return
 
     def do_update(self, args):
         """
         Updates an instance based on the class name
         and id by adding or updating attribute
         """
-        
         args = args.split()
         if not args:
             print("** class name missing **")
@@ -194,14 +209,14 @@ class HBNBCommand(cmd.Cmd):
                     self.do_destroy(class_ + ' ' + class_id)
                 elif method_name == 'update':
                     update_data = split[2].split(",")
-                    print(update_data)
                     if update_data is None or len(update_data) == 0:
                         print('** instance id missing **')
+                        return
                     elif len(update_data) == 1:
                         print('** attribute name missing **')
+                        return
                     elif len(update_data) == 2:
                         possible_dict = update_data[1]
-                        print(update_data)
                         possible_dict = ast.literal_eval(possible_dict)
 
                         if isinstance(possible_dict, dict):
