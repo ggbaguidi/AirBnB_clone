@@ -1,12 +1,7 @@
-.Common {
+.common {
 	margin: 0px;
 	padding: 0px;
 	color: #484848;
 	font-size: 14px;
-	font-familty: Circular,"Helvetica Neue",Helvetica,Arial,sans-serif;
-}
-
-link[rel="icon"] {
-	href: "../images/icon.png";
-	type: "image/png";
+	font-family: Circular,"Helvetica Neue",Helvetica,Arial,sans-serif;
 }
