@@ -5,6 +5,9 @@ footer {
 	border-top: 1px solid #CCCCCC;
 	text-align: center;
 	line-height: 60px;
-	position: absolute;
+	position: fixed;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	bottom: 0;
 }
